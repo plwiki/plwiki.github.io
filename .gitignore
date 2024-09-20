@@ -1,0 +1,6 @@
+.direnv
+bin
+docs/*.html
+docs/wiki/*.html
+*.hi
+*.o
