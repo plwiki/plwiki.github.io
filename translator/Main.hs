@@ -5,7 +5,6 @@ module Main where
 
 import GHC.Generics
 import Control.Applicative
-import Control.Monad.IO.Class
 import Control.Monad.Error.Class
 import Data.Coerce
 import Data.Default
@@ -15,7 +14,6 @@ import Data.Text.IO qualified as T
 import Data.ByteString.Lazy qualified as BL
 import Data.Map qualified as M
 import Data.Aeson qualified as A
-import Data.Aeson.Types qualified as A
 import Text.Blaze.Html.Renderer.Utf8 as H
 import Text.Hamlet qualified as H
 import Text.Pandoc qualified as P
@@ -29,12 +27,14 @@ data Route
   = RIndex
   | RMeta String
   | RWiki String
+  | RMainCss
   deriving Show
 
 relativeUrl :: Route -> FilePath
 relativeUrl RIndex = "index.html"
 relativeUrl (RMeta title) = "meta" </> title ++ ".html"
 relativeUrl (RWiki title) = "wiki" </> title ++ ".html"
+relativeUrl RMainCss = "css/main.css"
 
 renderUrl :: H.Render Route
 renderUrl r _ = "/" <> T.pack (relativeUrl r)
@@ -139,18 +139,19 @@ mathScript KaTeX =
 -- HTML templates
 wikiTemplate :: Metadata -> H.Html -> H.Html
 wikiTemplate (Metadata title categories mathMethod) content =
-  [H.shamlet|
+  [H.hamlet|
     $doctype 5
     <html>
       <head>
         <meta charset="utf-8">
         <title> #{ title }
+        <link rel="stylesheet" href=@{ RMainCss }>
         #{ mathScript mathMethod }
       <body>
         <main>
           <h1> #{ title }
           #{ content }
-  |]
+  |] renderUrl
 
 indexTemplate :: [String] -> [String] -> H.Html
 indexTemplate metas wikis =
@@ -160,6 +161,7 @@ indexTemplate metas wikis =
       <head>
         <meta charset="utf-8">
         <title> PL wiki
+        <link rel="stylesheet" href=@{ RMainCss }>
       <body>
         <main>
           <h1> PL wiki
@@ -231,3 +233,4 @@ main = do
       result <- P.runIOorExplode (translateDocument content)
       createDirectoryIfMissing True (output </> "wiki")
       BL.writeFile (output </> "wiki" </> title ++ ".html") result
+    RMainCss -> error "unreachable"

@@ -1,8 +1,6 @@
-result
 .direnv
 bin
-docs/*.html
-docs/meta/*.html
-docs/wiki/*.html
+docs
+result
 *.hi
 *.o

@@ -1,0 +1,26 @@
+* {
+  box-sizing: border-box
+}
+body {
+  margin: 0;
+  font-family: sans-serif
+}
+a {
+  text-decoration: none;
+  color: #007BFF
+}
+a:hover {
+  color: #0056B3
+}
+@media (min-width: 768px) {
+  main {
+    max-width: 50rem;
+    padding: 3rem;
+    margin: 0 auto;
+  }
+}
+@media (max-width: 767px) {
+  main {
+    padding: 1.5rem
+  }
+}
