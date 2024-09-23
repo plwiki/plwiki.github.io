@@ -6,6 +6,7 @@ let
       blaze-html
       shakespeare
       optparse-applicative
+      shake
     ];
 in
 stdenv.mkDerivation {

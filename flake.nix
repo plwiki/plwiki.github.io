@@ -20,6 +20,7 @@
               blaze-html
               shakespeare
               optparse-applicative
+              shake
             ]
           ))
           nodejs_22

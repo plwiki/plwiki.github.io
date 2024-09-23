@@ -1,0 +1,54 @@
+import Development.Shake
+import Development.Shake.FilePath
+
+translator :: String
+translator = "bin/translator"
+
+main :: IO ()
+main = shakeArgs shakeOptions $ do
+    -- Phony rules for clean, install, and serve
+    want ["all"]
+
+    "install" ~> do
+        need ["all"]
+        cmd_ "cp" "-r" "docs/*" "$(out)"
+
+    "serve" ~> do
+        need ["all"]
+        cmd_ "serve" "docs"
+
+    "all" ~> do
+      metaSrcs <- getDirectoryFiles "src/meta" ["*.md"]
+      wikiSrcs <- getDirectoryFiles "src/wiki" ["*.md"]
+      need $ ["docs/index.html", "docs/css/main.css"]
+          ++ ["docs/meta" </> f -<.> "html" | f <- metaSrcs]
+          ++ ["docs/wiki" </> f -<.> "html" | f <-  wikiSrcs]
+
+    translator %> \out -> do
+        need ["translator/Main.hs"]
+        cmd_ "mkdir" "-p" "bin"
+        cmd_ "ghc" "translator/Main.hs" "-Wall" "-O3" "-o" out
+
+    "docs/index.html" %> \_ -> do
+        metaSrcs <- getDirectoryFiles "" ["src/meta/*.md"]
+        wikiSrcs <- getDirectoryFiles "" ["src/wiki/*.md"]
+        need $ [translator]
+            ++ metaSrcs 
+            ++ wikiSrcs
+        cmd_ translator "--index" "-i" "src" "-o" "docs"
+
+    "docs/meta/*.html" %> \out -> do
+        let src = "src/meta" </> takeBaseName out <.> "md"
+        need [src, translator]
+        cmd_ translator "--meta" [takeBaseName src] "-i" "src" "-o" "docs"
+
+    "docs/wiki/*.html" %> \out -> do
+        let src = "src/wiki" </> takeBaseName out <.> "md"
+        need [src, translator]
+        cmd_ translator "--wiki" [takeBaseName src] "-i" "src" "-o" "docs"
+
+    "docs/css/*.css" %> \out -> do
+        let src = replaceDirectory1 out "src"
+        need [src]
+        cmd_ "mkdir" "-p" "docs/css"
+        cmd_ "cp" src out

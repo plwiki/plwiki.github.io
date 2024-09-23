@@ -1,6 +1,8 @@
-.direnv
+build
 bin
 docs
 result
+.direnv
+.shake
 *.hi
 *.o
