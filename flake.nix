@@ -11,6 +11,7 @@
       pkgs = nixpkgs.legacyPackages.x86_64-linux;
     in
     {
+      defaultPackage.x86_64-linux = pkgs.callPackage ./plwiki.nix { };
       devShell.x86_64-linux = pkgs.mkShell {
         buildInputs = with pkgs; [
           (ghc.withPackages (

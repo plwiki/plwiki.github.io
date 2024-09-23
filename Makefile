@@ -14,6 +14,9 @@ all: $(DOCS)
 serve: all
 	serve ./docs
 
+install:
+	cp -r ./docs/* $(out)
+
 clean:
 	rm -fr ./bin
 	rm -f ./docs/*.html
