@@ -2,6 +2,7 @@
 title: Haskell
 categories: ["프로그래밍 언어", "함수형 언어"]
 mathMethod: MathJax
+license: CC BY-SA 4.0
 ---
 
 하스켈은 순수 함수형 프로그래밍 언어이다.
