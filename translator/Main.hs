@@ -21,17 +21,37 @@ import Text.Hamlet qualified as H
 import Text.Pandoc qualified as P
 import Text.Pandoc.Shared qualified as P
 import Options.Applicative qualified as O
+import System.Directory
+import System.FilePath
 
 -- Option parser
+data Route
+  = RIndex
+  | RMeta String
+  | RWiki String
+  deriving Show
+
+relativeUrl :: Route -> FilePath
+relativeUrl RIndex = "index.html"
+relativeUrl (RMeta title) = "meta" </> title ++ ".html"
+relativeUrl (RWiki title) = "wiki" </> title ++ ".html"
+
+renderUrl :: H.Render Route
+renderUrl r _ = "/" <> T.pack (relativeUrl r)
+
 data Config = Config
-  { input :: FilePath
+  { route :: Route
+  , input :: FilePath
   , output :: FilePath
   }
   deriving Show
 
 config :: O.Parser Config
 config = Config
-   <$> O.strOption
+   <$> ( O.flag' RIndex (O.long "index")
+     <|> (RMeta <$> O.strOption (O.long "meta" <> O.metavar "TITLE"))
+     <|> (RWiki <$> O.strOption (O.long "wiki" <> O.metavar "TITLE")))
+   <*> O.strOption
         (O.short 'i' <> O.metavar "INPUT")
    <*> O.strOption
         (O.short 'o' <> O.metavar "OUTPUT")
@@ -117,8 +137,8 @@ mathScript KaTeX =
   |]
 
 -- HTML templates
-page :: Metadata -> H.Html -> H.Html
-page (Metadata title categories mathMethod) content =
+wikiTemplate :: Metadata -> H.Html -> H.Html
+wikiTemplate (Metadata title categories mathMethod) content =
   [H.shamlet|
     $doctype 5
     <html>
@@ -131,6 +151,38 @@ page (Metadata title categories mathMethod) content =
           <h1> #{ title }
           #{ content }
   |]
+
+indexTemplate :: [String] -> [String] -> H.Html
+indexTemplate metas wikis =
+  [H.hamlet|
+    $doctype 5
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title> PL wiki
+      <body>
+        <main>
+          <h1> PL wiki
+          <h2> 메타
+          <ul> #{ metalinks }
+          <h2> 문서 목록
+          <ul> #{ wikilinks }
+  |] renderUrl
+  where
+    metalinks = [ [H.hamlet|
+                    <li>
+                      <a href=@{ RMeta title }>
+                        #{ title }
+                  |] renderUrl
+                | title <- metas
+                ]
+    wikilinks = [ [H.hamlet|
+                    <li>
+                      <a href=@{ RWiki title }>
+                        #{ title }
+                  |] renderUrl
+                | title <- wikis
+                ]
 
 -- document translator
 readMarkdown :: T.Text -> P.PandocIO P.Pandoc
@@ -155,13 +207,27 @@ translateDocument :: T.Text -> P.PandocIO BL.ByteString
 translateDocument content = do
   ast <- readMarkdown content
   meta <- getMetadata ast
-  html <- page meta <$> writeHtml meta ast
+  html <- wikiTemplate meta <$> writeHtml meta ast
   pure (H.renderHtml html)
 
 -- main
 main :: IO ()
 main = do
-  Config input output <- getConfig
-  content <- T.readFile input
-  result <- P.runIOorExplode (translateDocument content)
-  BL.writeFile output result
+  Config route input output <- getConfig
+  case route of
+    RIndex -> do
+      metas <- map (dropExtension) <$> listDirectory (input </> "meta")
+      wikis <- map (dropExtension) <$> listDirectory (input </> "wiki")
+      let result = H.renderHtml (indexTemplate metas wikis)
+      createDirectoryIfMissing True output
+      BL.writeFile (output </> "index.html") result
+    RMeta title -> do
+      content <- T.readFile (input </> "meta" </> title ++ ".md")
+      result <- P.runIOorExplode (translateDocument content)
+      createDirectoryIfMissing True (output </> "meta")
+      BL.writeFile (output </> "meta" </> title ++ ".html") result
+    RWiki title -> do
+      content <- T.readFile (input </> "wiki" </> title ++ ".md")
+      result <- P.runIOorExplode (translateDocument content)
+      createDirectoryIfMissing True (output </> "wiki")
+      BL.writeFile (output </> "wiki" </> title ++ ".html") result

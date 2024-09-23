@@ -1,15 +1,22 @@
-SRCS = $(wildcard ./src/*.md)
-DOCS = $(patsubst ./src/%.md,./docs/wiki/%.html,$(SRCS))
+META_SRCS = $(wildcard ./src/meta/*.md)
+WIKI_SRCS = $(wildcard ./src/wiki/*.md)
+META_DOCS = $(patsubst ./src/meta/%.md,./docs/meta/%.html,$(META_SRCS))
+WIKI_DOCS = $(patsubst ./src/wiki/%.md,./docs/wiki/%.html,$(WIKI_SRCS))
 
-all: $(DOCS)
+all: ./docs/index.html $(META_DOCS) $(WIKI_DOCS)
 
 ./bin/translator: ./translator/Main.hs
 	@mkdir -p ./bin
 	ghc $< -O3 -o $@
 
-./docs/wiki/%.html: ./src/%.md ./bin/translator
-	@mkdir -p ./docs/wiki
-	./bin/translator -i $< -o $@
+./docs/index.html: $(META_SRCS) $(WIKI_SRCS) ./bin/translator
+	./bin/translator --index -i ./src -o ./docs
+
+./docs/meta/%.html: ./src/meta/%.md ./bin/translator
+	./bin/translator --meta $* -i ./src -o ./docs
+
+./docs/wiki/%.html: ./src/wiki/%.md ./bin/translator
+	./bin/translator --wiki $* -i ./src -o ./docs
 
 serve: all
 	serve ./docs
@@ -18,8 +25,6 @@ install:
 	cp -r ./docs/* $(out)
 
 clean:
-	rm -fr ./bin
-	rm -f ./docs/*.html
-	rm -f ./docs/wiki/*.html
+	rm -fr ./bin/* ./docs/*
 	rm -f ./translator/*.hi
 	rm -f ./translator/*.o

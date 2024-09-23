@@ -2,6 +2,7 @@ result
 .direnv
 bin
 docs/*.html
+docs/meta/*.html
 docs/wiki/*.html
 *.hi
 *.o
