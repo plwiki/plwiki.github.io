@@ -1,26 +1,43 @@
+:root {
+  --main-color: #202020;
+  --light-blue: #007BFF;
+  --dark-blue: #0056B3;
+  --border-color: #D1D9E0;
+}
 * {
-  box-sizing: border-box
+  box-sizing: border-box;
+  color: var(--main-color);
+}
+header {
+  border-color: var(--border-color);
+  border-width: thin;
+  border-bottom-style: solid;
+  padding: 1rem;
 }
 body {
   margin: 0;
-  font-family: sans-serif
+  font-family: sans-serif;
 }
 a {
   text-decoration: none;
-  color: #007BFF
+  color: var(--light-blue);
 }
 a:hover {
-  color: #0056B3
+  color: var(--dark-blue);
+}
+#site-title {
+  font-size: 3rem;
+  color: var(--main-color);
 }
 @media (min-width: 768px) {
   main {
-    max-width: 50rem;
+    max-width: 55rem;
     padding: 3rem;
     margin: 0 auto;
   }
 }
 @media (max-width: 767px) {
   main {
-    padding: 1.5rem
+    padding: 1rem;
   }
 }

@@ -137,6 +137,13 @@ mathScript KaTeX =
   |]
 
 -- HTML templates
+headerTemplate :: H.Html
+headerTemplate =
+  [H.hamlet|
+    <header>
+      <a id="site-title" href=@{ RIndex }> PL wiki
+  |] renderUrl
+
 wikiTemplate :: Metadata -> H.Html -> H.Html
 wikiTemplate (Metadata title categories mathMethod) content =
   [H.hamlet|
@@ -148,6 +155,7 @@ wikiTemplate (Metadata title categories mathMethod) content =
         <link rel="stylesheet" href=@{ RMainCss }>
         #{ mathScript mathMethod }
       <body>
+        #{ headerTemplate }
         <main>
           <h1> #{ title }
           #{ content }
@@ -163,8 +171,8 @@ indexTemplate metas wikis =
         <title> PL wiki
         <link rel="stylesheet" href=@{ RMainCss }>
       <body>
+        #{ headerTemplate }
         <main>
-          <h1> PL wiki
           <h2> 메타
           <ul> #{ metalinks }
           <h2> 문서 목록
