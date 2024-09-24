@@ -11,9 +11,11 @@ main = shakeArgs shakeOptions $ do
     "all" ~> do
       metaSrcs <- getDirectoryFiles "src/meta" ["*.md"]
       wikiSrcs <- getDirectoryFiles "src/wiki" ["*.md"]
-      need $ ["docs/index.html", "docs/css/main.css"]
+      cssSrcs  <- getDirectoryFiles "src/css"  ["*.css"]
+      need $ ["docs/index.html"]
           ++ ["docs/meta" </> f -<.> "html" | f <- metaSrcs]
-          ++ ["docs/wiki" </> f -<.> "html" | f <-  wikiSrcs]
+          ++ ["docs/wiki" </> f -<.> "html" | f <- wikiSrcs]
+          ++ ["docs/css"  </> f             | f <- cssSrcs]
 
     translator %> \out -> do
         need ["translator/Main.hs"]

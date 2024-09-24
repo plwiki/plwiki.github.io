@@ -28,6 +28,7 @@ data Route
   | RMeta String
   | RWiki String
   | RMainCss
+  | RThemeCss
   deriving Show
 
 relativeUrl :: Route -> FilePath
@@ -35,6 +36,7 @@ relativeUrl RIndex = "index.html"
 relativeUrl (RMeta title) = "meta" </> title ++ ".html"
 relativeUrl (RWiki title) = "wiki" </> title ++ ".html"
 relativeUrl RMainCss = "css/main.css"
+relativeUrl RThemeCss = "css/theme.css"
 
 renderUrl :: H.Render Route
 renderUrl r _ = "/" <> T.pack (relativeUrl r)
@@ -141,7 +143,8 @@ headerTemplate :: H.Html
 headerTemplate =
   [H.hamlet|
     <header>
-      <a id="site-title" href=@{ RIndex }> PL wiki
+      <div class="content-box">
+        <a id="site-title" href=@{ RIndex }> PL wiki
   |] renderUrl
 
 wikiTemplate :: Metadata -> H.Html -> H.Html
@@ -154,12 +157,14 @@ wikiTemplate (Metadata title categories mathMethod) content =
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> #{ title }
         <link rel="stylesheet" href=@{ RMainCss }>
+        <link rel="stylesheet" href=@{ RThemeCss }>
         #{ mathScript mathMethod }
       <body>
         #{ headerTemplate }
         <main>
-          <h1> #{ title }
-          #{ content }
+          <div class="content-box">
+            <h1> #{ title }
+            #{ content }
   |] renderUrl
 
 indexTemplate :: [String] -> [String] -> H.Html
@@ -172,13 +177,16 @@ indexTemplate metas wikis =
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> PL wiki
         <link rel="stylesheet" href=@{ RMainCss }>
+        <link rel="stylesheet" href=@{ RThemeCss }>
       <body>
         #{ headerTemplate }
         <main>
-          <h2> 메타
-          <ul> #{ metalinks }
-          <h2> 문서 목록
-          <ul> #{ wikilinks }
+          <div class="content-box">
+            <h1> 색인
+            <h2> 메타
+            <ul> #{ metalinks }
+            <h2> 문서
+            <ul> #{ wikilinks }
   |] renderUrl
   where
     metalinks = [ [H.hamlet|
@@ -244,3 +252,4 @@ main = do
       createDirectoryIfMissing True (output </> "wiki")
       BL.writeFile (output </> "wiki" </> title ++ ".html") result
     RMainCss -> error "unreachable"
+    RThemeCss -> error "unreachable"
