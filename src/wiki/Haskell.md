@@ -9,5 +9,5 @@ license: CC BY-SA 4.0
 정적 타입, 타입 추론, 지연 평가, 순수 함수형 등의 특징을 가지고 있다.
 
 ## 외부 링크
-* [www.haskell.org](https://www.haskell.org/)
-* [wiki.haskell.org](https://wiki.haskell.org/Haskell)
+* [공식 웹사이트](https://www.haskell.org/)
+* [하스켈 위키](https://wiki.haskell.org/Haskell)
