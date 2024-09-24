@@ -6,16 +6,7 @@ translator = "bin/translator"
 
 main :: IO ()
 main = shakeArgs shakeOptions $ do
-    -- Phony rules for clean, install, and serve
     want ["all"]
-
-    "install" ~> do
-        need ["all"]
-        cmd_ "cp" "-r" "docs/*" "$(out)"
-
-    "serve" ~> do
-        need ["all"]
-        cmd_ "serve" "docs"
 
     "all" ~> do
       metaSrcs <- getDirectoryFiles "src/meta" ["*.md"]
