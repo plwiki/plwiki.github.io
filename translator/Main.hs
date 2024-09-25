@@ -69,6 +69,7 @@ data Metadata = Metadata
   { title :: T.Text
   , categories :: [T.Text]
   , mathMethod :: MathMethod
+  , license :: T.Text
   }
   deriving (Generic, Show)
 
@@ -147,8 +148,20 @@ headerTemplate =
         <a id="site-title" href=@{ RIndex }> PL wiki
   |] renderUrl
 
+categoriesTemplate :: [T.Text] -> H.Html
+categoriesTemplate cs
+  | null cs   = [H.shamlet| |]
+  | otherwise =
+    [H.hamlet|
+      <div class="categories-list">
+        <ul>
+          #{ list }
+    |] renderUrl
+  where
+    list = [ [H.hamlet| <li> #{ c } |] renderUrl | c <- cs ]
+
 wikiTemplate :: Metadata -> H.Html -> H.Html
-wikiTemplate (Metadata title categories mathMethod) content =
+wikiTemplate (Metadata title categories mathMethod _) content =
   [H.hamlet|
     $doctype 5
     <html>
@@ -164,6 +177,7 @@ wikiTemplate (Metadata title categories mathMethod) content =
         <main>
           <div class="content-box">
             <h1> #{ title }
+            #{ categoriesTemplate categories }
             #{ content }
   |] renderUrl
 
@@ -217,7 +231,7 @@ readMarkdown = P.readMarkdown options
       }
 
 writeHtml :: Metadata -> P.Pandoc -> P.PandocIO H.Html
-writeHtml (Metadata _ _ mathMethod) = P.writeHtml5 options
+writeHtml (Metadata _ _ mathMethod _) = P.writeHtml5 options
   where
     options = def
       { P.writerHTMLMathMethod = pandocMath mathMethod
