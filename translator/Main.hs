@@ -196,6 +196,7 @@ indexTemplate metas wikis =
         #{ headerTemplate }
         <main>
           <div class="content-box">
+            PL wiki는 프로그래밍 언어론을 중심으로 컴퓨터 과학, 논리학, 수학, 철학에 대한 정보를 정리하기 위한 위키입니다.
             <h1> 색인
             <h2> 메타
             <ul> #{ metalinks }
