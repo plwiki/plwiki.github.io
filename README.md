@@ -1,2 +1,2 @@
 # PL wiki
-[https://plwiki.github.io]()
+<https://plwiki.github.io>
