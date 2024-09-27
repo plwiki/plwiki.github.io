@@ -13,6 +13,6 @@ stdenv.mkDerivation {
   pname = "plwiki";
   version = "latest";
   src = ./.;
-  buildInputs = [ (ghc.withPackages haskellPackages) ];
+  nativeBuildInputs = [ (ghc.withPackages haskellPackages) ];
   LANG = "C.utf8";
 }

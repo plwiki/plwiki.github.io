@@ -3,30 +3,31 @@
 
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
   };
 
   outputs =
-    { self, nixpkgs }:
-    let
-      pkgs = nixpkgs.legacyPackages.x86_64-linux;
-    in
     {
-      defaultPackage.x86_64-linux = pkgs.callPackage ./plwiki.nix { };
-      devShell.x86_64-linux = pkgs.mkShell {
-        buildInputs = with pkgs; [
-          (ghc.withPackages (
-            hpkgs: with hpkgs; [
-              pandoc
-              blaze-html
-              shakespeare
-              optparse-applicative
-              shake
-            ]
-          ))
-          nodejs_22
-          nodePackages.mathjax
-          nodePackages.serve
-        ];
-      };
-    };
+      self,
+      nixpkgs,
+      flake-utils,
+    }:
+    flake-utils.lib.eachDefaultSystem (
+      system:
+      let
+        pkgs = nixpkgs.legacyPackages."${system}";
+        plwiki = pkgs.callPackage ./plwiki.nix { };
+      in
+      {
+        defaultPackage = plwiki;
+        devShell = pkgs.mkShell {
+          nativeBuildInputs = plwiki.nativeBuildInputs;
+          buildInputs = with pkgs; [
+            nodejs_22
+            nodePackages.mathjax
+            nodePackages.serve
+          ];
+        };
+      }
+    );
 }
