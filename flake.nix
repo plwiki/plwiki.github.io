@@ -19,8 +19,8 @@
         plwiki = pkgs.callPackage ./plwiki.nix { };
       in
       {
-        defaultPackage = plwiki;
-        devShell = pkgs.mkShell {
+        packages.default = plwiki;
+        devShells.default = pkgs.mkShell {
           nativeBuildInputs = plwiki.nativeBuildInputs;
           buildInputs = with pkgs; [
             nodejs_22
