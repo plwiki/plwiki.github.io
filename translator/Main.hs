@@ -8,6 +8,7 @@ import Control.Applicative
 import Control.Monad.Error.Class
 import Data.Coerce
 import Data.Default
+import Data.List
 import Data.String
 import Data.Text qualified as T
 import Data.Text.IO qualified as T
@@ -209,14 +210,14 @@ indexTemplate metas wikis =
                       <a href=@{ RMeta title }>
                         #{ title }
                   |] renderUrl
-                | title <- metas
+                | title <- sort metas
                 ]
     wikilinks = [ [H.hamlet|
                     <li>
                       <a href=@{ RWiki title }>
                         #{ title }
                   |] renderUrl
-                | title <- wikis
+                | title <- sort wikis
                 ]
 
 -- document translator
