@@ -59,3 +59,15 @@ div.categories-list>ul>li:not(:last-child)::after {
   border-width: thin;
   border-left-style: solid;
 }
+table {
+  background-color: var(--source-background);
+  border-collapse: collapse;
+}
+th, td {
+  border-color: var(--border-color);
+  border-width: thin;
+  border-style: solid;
+}
+th, td {
+  padding: 0.2em;
+}
