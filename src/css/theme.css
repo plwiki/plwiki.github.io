@@ -24,10 +24,6 @@ a:hover {
   text-decoration: underline;
   color: var(--dark-blue);
 }
-#site-title {
-  font-size: 3rem;
-  color: var(--main-color);
-}
 div.sourceCode {
   border-color: var(--border-color);
   border-width: thin;
@@ -70,4 +66,11 @@ th, td {
 }
 th, td {
   padding: 0.2em;
+}
+#site-title {
+  font-size: 3rem;
+  color: var(--main-color);
+}
+#wiki-index {
+  column-count: 3;
 }
