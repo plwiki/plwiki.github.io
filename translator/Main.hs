@@ -19,6 +19,7 @@ import Text.Blaze.Html.Renderer.Utf8 as H
 import Text.Hamlet qualified as H
 import Text.Pandoc qualified as P
 import Text.Pandoc.Shared qualified as P
+import Text.Pandoc.Citeproc qualified as P
 import Options.Applicative qualified as O
 import System.Directory
 import System.FilePath
@@ -229,6 +230,7 @@ readMarkdown = P.readMarkdown options
                           <> P.extensionsFromList
                               [ P.Ext_yaml_metadata_block
                               , P.Ext_tex_math_single_backslash
+                              , P.Ext_citations
                               ]
       }
 
@@ -241,9 +243,14 @@ writeHtml (Metadata _ _ mathMethod _) = P.writeHtml5 options
 
 translateDocument :: T.Text -> P.PandocIO BL.ByteString
 translateDocument content = do
-  ast <- readMarkdown content
-  meta <- getMetadata ast
-  html <- wikiTemplate meta <$> writeHtml meta ast
+  (P.Pandoc _meta _blocks) <- readMarkdown content
+  let ast = P.Pandoc
+              (P.addMetaField "link-citations" True
+                (P.addMetaField "bibliography" ("src/bibliography.bib" :: T.Text) _meta))
+              _blocks
+  ast' <- P.processCitations ast
+  meta' <- getMetadata ast'
+  html <- wikiTemplate meta' <$> writeHtml meta' ast'
   pure (H.renderHtml html)
 
 -- main

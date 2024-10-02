@@ -35,12 +35,12 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ do
 
     "site/meta/*.html" %> \out -> do
         let src = "src/meta" </> takeBaseName out <.> "md"
-        need [src, translator]
+        need [src, "src/bibliography.bib", translator]
         cmd_ translator "--meta" [takeBaseName src] "-i" "src" "-o" "site"
 
     "site/wiki/*.html" %> \out -> do
         let src = "src/wiki" </> takeBaseName out <.> "md"
-        need [src, translator]
+        need [src, "src/bibliography.bib", translator]
         cmd_ translator "--wiki" [takeBaseName src] "-i" "src" "-o" "site"
 
     "site/css/*.css" %> \out -> do
