@@ -1,17 +1,17 @@
 .PHONY: all install serve clean
 
-all: ./build
-	./build all
+all: _shake/build
+	_shake/build all
 
 install: all
-	cp -r ./docs/* $(out)
+	cp -r ./site/* $(out)
 
 serve: all
-	serve ./docs
+	serve ./site
 
 clean:
-	rm -fr ./bin ./docs ./build ./*.hi ./*.o translator/*.hi translator/*.o
+	rm -rf _shake _build bin site
 
-./build: ./build.hs
-	@mkdir -p ./bin
-	ghc ./build.hs -Wall -O3 -o ./build
+_shake/build: ./Shakefile.hs
+	@mkdir -p ./_shake
+	ghc ./Shakefile.hs -Wall -O3 -rtsopts -threaded -with-rtsopts=-IO -outputdir=_shake -o $@

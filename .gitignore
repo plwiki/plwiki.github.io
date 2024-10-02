@@ -1,8 +1,6 @@
-build
+_shake
+_build
 bin
-docs
+site
 result
 .direnv
-.shake
-*.hi
-*.o

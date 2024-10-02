@@ -18,7 +18,7 @@ stdenv.mkDerivation {
       ./src
       ./translator
       ./Makefile
-      ./build.hs
+      ./Shakefile.hs
     ];
   };
   nativeBuildInputs = [ (ghc.withPackages haskellPackages) ];
