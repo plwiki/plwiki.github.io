@@ -72,5 +72,5 @@ th, td {
   color: var(--main-color);
 }
 #wiki-index {
-  column-count: 3;
+  column-count: 2;
 }
