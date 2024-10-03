@@ -9,6 +9,7 @@
   color: var(--main-color);
 }
 body {
+  line-height: 1.5;
   font-family: sans-serif;
 }
 header {
