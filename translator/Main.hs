@@ -230,6 +230,7 @@ readMarkdown = P.readMarkdown options
                           <> P.extensionsFromList
                               [ P.Ext_yaml_metadata_block
                               , P.Ext_tex_math_single_backslash
+                              , P.Ext_tex_math_dollars
                               , P.Ext_citations
                               ]
       }
