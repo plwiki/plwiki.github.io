@@ -33,14 +33,14 @@ div.sourceCode {
   background-color: var(--source-background);
 }
 pre.sourceCode {
-  margin: 0.5em;
+  margin: 0.5rem;
 }
 div.categories-list {
   border-color: var(--border-color);
   border-width: thin;
   border-style: solid;
   border-radius: 5px;
-  padding: 0.3em;
+  padding: 0.3rem;
 }
 div.categories-list>ul {
   display: flex;
@@ -50,8 +50,8 @@ div.categories-list>ul {
 }
 div.categories-list>ul>li:not(:last-child)::after {
   content: "";
-  margin-left: 0.3em;
-  margin-right: 0.3em;
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
   border-color: var(--border-color);
   border-width: thin;
   border-left-style: solid;
@@ -66,7 +66,7 @@ th, td {
   border-style: solid;
 }
 th, td {
-  padding: 0.2em;
+  padding: 0.2rem;
 }
 #site-title {
   font-size: 3rem;
