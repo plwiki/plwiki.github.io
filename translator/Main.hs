@@ -5,20 +5,18 @@ module Main where
 
 import GHC.Generics
 import Control.Applicative
-import Control.Monad.Error.Class
-import Data.Coerce
 import Data.Default
 import Data.List
-import Data.String
 import Data.Text qualified as T
-import Data.Text.IO qualified as T
+import Data.Text.Encoding qualified as T
+import Data.ByteString qualified as BS
 import Data.ByteString.Lazy qualified as BL
-import Data.Map qualified as M
 import Data.Aeson qualified as A
+import Data.Yaml.Aeson qualified as Y
 import Text.Blaze.Html.Renderer.Utf8 as H
 import Text.Hamlet qualified as H
 import Text.Pandoc qualified as P
-import Text.Pandoc.Shared qualified as P
+import Text.Pandoc.Builder qualified as P
 import Text.Pandoc.Citeproc qualified as P
 import Options.Applicative qualified as O
 import System.Directory
@@ -70,28 +68,6 @@ data Metadata = Metadata
   deriving (Generic, Show)
 
 instance A.FromJSON Metadata
-
-newtype AMetaValue = AMetaValue P.MetaValue
-newtype AMeta = AMeta P.Meta
-
-instance A.ToJSON AMetaValue where
-  toJSON (AMetaValue v) =
-    case v of
-      P.MetaMap m     -> A.toJSON (coerce m  :: M.Map T.Text AMetaValue)
-      P.MetaList xs   -> A.toJSON (coerce xs :: [AMetaValue])
-      P.MetaBool b    -> A.toJSON b
-      P.MetaString s  -> A.toJSON s
-      P.MetaInlines s -> A.toJSON (P.stringify s)
-      P.MetaBlocks s  -> A.toJSON (P.stringify s)
-
-instance A.ToJSON AMeta where
-  toJSON (AMeta (P.Meta m)) = A.toJSON (coerce m :: M.Map T.Text AMetaValue)
-
-getMetadata :: P.Pandoc -> P.PandocIO Metadata
-getMetadata (P.Pandoc meta _) =
-  case A.fromJSON (A.toJSON (coerce meta :: AMeta)) of
-    A.Error e   -> throwError (P.PandocSomeError (fromString e))
-    A.Success m -> pure m
 
 -- HTML templates
 mathScript :: H.Html
@@ -208,19 +184,31 @@ writeHtml = P.writeHtml5 options
       { P.writerHTMLMathMethod = P.MathJax P.defaultMathJaxURL
       }
 
-translateDocument :: T.Text -> P.PandocIO BL.ByteString
-translateDocument content = do
-  (P.Pandoc _meta _blocks) <- readMarkdown content
-  let ast = P.Pandoc
-              (P.addMetaField "link-citations" True
-                (P.addMetaField "bibliography" ("src/bibliography.bib" :: T.Text) _meta))
-              _blocks
-  ast' <- P.processCitations ast
-  meta' <- getMetadata ast'
-  html <- wikiTemplate meta' <$> writeHtml ast'
+translateDocument :: Metadata -> T.Text -> P.PandocIO BL.ByteString
+translateDocument meta content = do
+  ast0 <- readMarkdown content
+  let ast1 = ( P.setMeta "link-citations" True
+             . P.setMeta "bibliography" ("src/bibliography.bib" :: T.Text)
+             ) ast0
+  ast2 <- P.processCitations ast1
+  html <- wikiTemplate meta <$> writeHtml ast2
   pure (H.renderHtml html)
 
 -- main
+readWikiFile :: FilePath -> IO (Metadata, T.Text)
+readWikiFile path = do
+  s <- BS.readFile path
+  case BS.stripPrefix "---\n" s of
+    Nothing -> error "no yaml header begin"
+    Just s' -> do
+      let (as, bs) = BS.breakSubstring "---\n" s'
+      case BS.stripPrefix "---\n" bs of
+        Nothing -> error "yaml header end"
+        Just bs' -> do
+          meta <- Y.decodeThrow as
+          let content = T.decodeUtf8 bs'
+          return (meta, content)
+
 main :: IO ()
 main = do
   Config route input output <- getConfig
@@ -232,13 +220,13 @@ main = do
       createDirectoryIfMissing True output
       BL.writeFile (output </> "index.html") result
     RMeta title -> do
-      content <- T.readFile (input </> "meta" </> title ++ ".md")
-      result <- P.runIOorExplode (translateDocument content)
+      (meta, content) <- readWikiFile (input </> "meta" </> title ++ ".md")
+      result <- P.runIOorExplode (translateDocument meta content)
       createDirectoryIfMissing True (output </> "meta")
       BL.writeFile (output </> "meta" </> title ++ ".html") result
     RWiki title -> do
-      content <- T.readFile (input </> "wiki" </> title ++ ".md")
-      result <- P.runIOorExplode (translateDocument content)
+      (meta, content) <- readWikiFile (input </> "wiki" </> title ++ ".md")
+      result <- P.runIOorExplode (translateDocument meta content)
       createDirectoryIfMissing True (output </> "wiki")
       BL.writeFile (output </> "wiki" </> title ++ ".html") result
     RMainCss -> error "unreachable"
