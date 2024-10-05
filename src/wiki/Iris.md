@@ -1,7 +1,6 @@
 ---
 title: Iris
 categories: ["논리 체계"]
-mathMethod: MathJax
 license: CC BY-SA 4.0
 ---
 

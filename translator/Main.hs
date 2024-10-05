@@ -62,18 +62,13 @@ getConfig :: IO Config
 getConfig = O.execParser (O.info (config <**> O.helper) O.fullDesc)
 
 -- Metadata
-data MathMethod = MathJax | KaTeX
-  deriving (Generic, Show)
-
 data Metadata = Metadata
   { title :: T.Text
   , categories :: [T.Text]
-  , mathMethod :: MathMethod
   , license :: T.Text
   }
   deriving (Generic, Show)
 
-instance A.FromJSON MathMethod
 instance A.FromJSON Metadata
 
 newtype AMetaValue = AMetaValue P.MetaValue
@@ -98,13 +93,9 @@ getMetadata (P.Pandoc meta _) =
     A.Error e   -> throwError (P.PandocSomeError (fromString e))
     A.Success m -> pure m
 
--- Math support
-pandocMath :: MathMethod -> P.HTMLMathMethod
-pandocMath MathJax = P.MathJax P.defaultMathJaxURL
-pandocMath KaTeX   = P.KaTeX P.defaultKaTeXURL
-
-mathScript :: MathMethod -> H.Html
-mathScript MathJax =
+-- HTML templates
+mathScript :: H.Html
+mathScript =
   [H.shamlet|
     <script>
       MathJax = {
@@ -118,28 +109,7 @@ mathScript MathJax =
       };
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
   |]
-mathScript KaTeX =
-  [H.shamlet|
-    <link rel="stylesheet"
-          href="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.css"
-          integrity="sha384-nB0miv6/jRmo5UMMR1wu3Gz6NLsoTkbqJghGIsx//Rlm+ZU03BU6SQNC66uf4l5+"
-          crossorigin="anonymous">
-    <script defer
-            src="https://cdn.jsdelivr.net/npm/katex@0.16.11/dist/katex.min.js"
-            integrity="sha384-7zkQWkzuo3B5mTepMUcHkMB5jZaolc2xDwL6VFqjFALcbeS9Ggm/Yr2r3Dy4lfFg"
-            crossorigin="anonymous">
-    <script>
-      document.addEventListener("DOMContentLoaded", () => {
-        [...document.getElementsByClassName("math display")].forEach( element =>
-          katex.render(element.textContent, element, {throwOnError: false, displayMode: true})
-        );
-        [...document.getElementsByClassName("math inline")].forEach( element =>
-          katex.render(element.textContent, element, {throwOnError: false, displayMode: false})
-        );
-      });
-  |]
 
--- HTML templates
 headerTemplate :: H.Html
 headerTemplate =
   [H.hamlet|
@@ -161,7 +131,7 @@ categoriesTemplate cs
     list = [ [H.hamlet| <li> #{ c } |] renderUrl | c <- cs ]
 
 wikiTemplate :: Metadata -> H.Html -> H.Html
-wikiTemplate (Metadata title categories mathMethod _) content =
+wikiTemplate (Metadata title categories _) content =
   [H.hamlet|
     $doctype 5
     <html>
@@ -170,7 +140,7 @@ wikiTemplate (Metadata title categories mathMethod _) content =
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> #{ title }
         <link rel="stylesheet" href=@{ RMainCss }>
-        #{ mathScript mathMethod }
+        #{ mathScript }
       <body>
         #{ headerTemplate }
         <main>
@@ -231,11 +201,11 @@ readMarkdown = P.readMarkdown options
                               ]
       }
 
-writeHtml :: Metadata -> P.Pandoc -> P.PandocIO H.Html
-writeHtml (Metadata _ _ mathMethod _) = P.writeHtml5 options
+writeHtml :: P.Pandoc -> P.PandocIO H.Html
+writeHtml = P.writeHtml5 options
   where
     options = def
-      { P.writerHTMLMathMethod = pandocMath mathMethod
+      { P.writerHTMLMathMethod = P.MathJax P.defaultMathJaxURL
       }
 
 translateDocument :: T.Text -> P.PandocIO BL.ByteString
@@ -247,7 +217,7 @@ translateDocument content = do
               _blocks
   ast' <- P.processCitations ast
   meta' <- getMetadata ast'
-  html <- wikiTemplate meta' <$> writeHtml meta' ast'
+  html <- wikiTemplate meta' <$> writeHtml ast'
   pure (H.renderHtml html)
 
 -- main

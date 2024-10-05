@@ -1,7 +1,6 @@
 ---
 title: CompCert
 categories: ["컴파일러"]
-mathMethod: MathJax
 license: CC BY-SA 4.0
 ---
 

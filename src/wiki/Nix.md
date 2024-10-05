@@ -1,7 +1,6 @@
 ---
 title: Nix
 categories: ["프로그래밍 언어", "함수형 프로그래밍 언어"]
-mathMethod: MathJax
 license: CC BY-SA 4.0
 ---
 
