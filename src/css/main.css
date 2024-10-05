@@ -1,3 +1,13 @@
+/* constant defs */
+:root {
+  --main-color: #202020;
+  --light-blue: #007BFF;
+  --dark-blue: #0056B3;
+  --border-color: #D1D9E0;
+  --source-background: #E8F2FB;
+}
+
+/* layout */
 * {
   box-sizing: border-box;
 }
@@ -8,4 +18,76 @@ body {
   max-width: 64rem;
   margin: 0 auto;
   padding: 1rem;
+}
+
+/* theme */
+* {
+  color: var(--main-color);
+}
+body {
+  line-height: 1.5;
+  font-family: sans-serif;
+}
+header {
+  border-color: var(--border-color);
+  border-width: thin;
+  border-bottom-style: solid;
+}
+a {
+  text-decoration: none;
+  color: var(--light-blue);
+}
+a:hover {
+  text-decoration: underline;
+  color: var(--dark-blue);
+}
+div.sourceCode {
+  border-color: var(--border-color);
+  border-width: thin;
+  border-style: solid;
+  border-radius: 5px;
+  background-color: var(--source-background);
+}
+pre.sourceCode {
+  margin: 0.5rem;
+}
+div.categories-list {
+  border-color: var(--border-color);
+  border-width: thin;
+  border-style: solid;
+  border-radius: 5px;
+  padding: 0.3rem;
+}
+div.categories-list>ul {
+  display: flex;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+div.categories-list>ul>li:not(:last-child)::after {
+  content: "";
+  margin-left: 0.3rem;
+  margin-right: 0.3rem;
+  border-color: var(--border-color);
+  border-width: thin;
+  border-left-style: solid;
+}
+table {
+  background-color: var(--source-background);
+  border-collapse: collapse;
+}
+th, td {
+  border-color: var(--border-color);
+  border-width: thin;
+  border-style: solid;
+}
+th, td {
+  padding: 0.2rem;
+}
+#site-title {
+  font-size: 3rem;
+  color: var(--main-color);
+}
+#wiki-index {
+  column-count: 2;
 }

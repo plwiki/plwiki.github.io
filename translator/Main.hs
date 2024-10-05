@@ -30,7 +30,6 @@ data Route
   | RMeta String
   | RWiki String
   | RMainCss
-  | RThemeCss
   deriving Show
 
 relativeUrl :: Route -> FilePath
@@ -38,7 +37,6 @@ relativeUrl RIndex = "index.html"
 relativeUrl (RMeta title) = "meta" </> title ++ ".html"
 relativeUrl (RWiki title) = "wiki" </> title ++ ".html"
 relativeUrl RMainCss = "css/main.css"
-relativeUrl RThemeCss = "css/theme.css"
 
 renderUrl :: H.Render Route
 renderUrl r _ = "/" <> T.pack (relativeUrl r)
@@ -172,7 +170,6 @@ wikiTemplate (Metadata title categories mathMethod _) content =
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> #{ title }
         <link rel="stylesheet" href=@{ RMainCss }>
-        <link rel="stylesheet" href=@{ RThemeCss }>
         #{ mathScript mathMethod }
       <body>
         #{ headerTemplate }
@@ -193,7 +190,6 @@ indexTemplate metas wikis =
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title> PL wiki
         <link rel="stylesheet" href=@{ RMainCss }>
-        <link rel="stylesheet" href=@{ RThemeCss }>
       <body>
         #{ headerTemplate }
         <main>
@@ -276,4 +272,3 @@ main = do
       createDirectoryIfMissing True (output </> "wiki")
       BL.writeFile (output </> "wiki" </> title ++ ".html") result
     RMainCss -> error "unreachable"
-    RThemeCss -> error "unreachable"
