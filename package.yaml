@@ -1,13 +1,12 @@
-name: plwiki
-github: plwiki/plwiki.github.io
+name: plwiki-builder
 executables:
-  buildWiki:
+  build:
     source-dirs: .
-    main: Shakefile.hs
+    main: Main.hs
     language: GHC2021
     default-extensions:
       - LambdaCase
-    ghc-options: -Wall
+    ghc-options: -Wall -O3 -rtsopts -threaded -with-rtsopts=-IO
     dependencies:
       - base
       - filepath

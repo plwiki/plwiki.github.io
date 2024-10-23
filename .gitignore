@@ -3,5 +3,6 @@ _build
 bin
 site
 result
+dist-newstyle
 .direnv
 .stack-work

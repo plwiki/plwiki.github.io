@@ -4,25 +4,19 @@ cabal-version: 1.12
 --
 -- see: https://github.com/sol/hpack
 
-name:           plwiki
+name:           plwiki-builder
 version:        0.0.0
-homepage:       https://github.com/plwiki/plwiki.github.io#readme
-bug-reports:    https://github.com/plwiki/plwiki.github.io/issues
 build-type:     Simple
 
-source-repository head
-  type: git
-  location: https://github.com/plwiki/plwiki.github.io
-
-executable buildWiki
-  main-is: Shakefile.hs
+executable build
+  main-is: Main.hs
   other-modules:
-      Paths_plwiki
+      Paths_plwiki_builder
   hs-source-dirs:
       ./
   default-extensions:
       LambdaCase
-  ghc-options: -Wall
+  ghc-options: -Wall -O3 -rtsopts -threaded -with-rtsopts=-IO
   build-depends:
       aeson
     , base

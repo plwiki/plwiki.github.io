@@ -208,6 +208,10 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
           ++ ["site/wiki" </> f -<.> "html" | f <- wikiSrcs]
           ++ ["site/css"  </> f             | f <- cssSrcs]
 
+  , "clean" ~> do
+      putInfo "Cleaning..."
+      removeFilesAfter "site" ["//"]
+
   , "site/index.html" %> \out -> do
         metaSrcs <- getDirectoryFiles "" ["src/meta/*.md"]
         wikiSrcs <- getDirectoryFiles "" ["src/wiki/*.md"]
