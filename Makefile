@@ -1,7 +1,7 @@
 .PHONY: all install serve clean
 
 all: _shake/build
-	_shake/build all
+	_shake/build -j all
 
 install: all
 	cp -r ./site/* $(out)
