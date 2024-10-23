@@ -5,7 +5,6 @@ let
       pandoc
       blaze-html
       shakespeare
-      optparse-applicative
       shake
     ];
 in
@@ -16,7 +15,6 @@ stdenv.mkDerivation {
     root = ./.;
     fileset = lib.fileset.unions [
       ./src
-      ./translator
       ./Makefile
       ./Shakefile.hs
     ];

@@ -10,7 +10,7 @@ serve: all
 	serve ./site
 
 clean:
-	rm -rf _shake _build bin site
+	rm -rf _shake _build site
 
 _shake/build: ./Shakefile.hs
 	@mkdir -p ./_shake
