@@ -231,8 +231,6 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
 
   , "site/css/*.css" %> \out -> do
         let src = replaceDirectory1 out "src"
-        need [src]
-        cmd_ "mkdir" "-p" "site/css"
-        cmd_ "cp" src out
+        copyFile' src out
 
   ]
