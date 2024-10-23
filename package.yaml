@@ -1,0 +1,24 @@
+name: plwiki
+github: plwiki/plwiki.github.io
+executables:
+  buildWiki:
+    source-dirs: .
+    main: Shakefile.hs
+    language: GHC2021
+    default-extensions:
+      - LambdaCase
+    ghc-options: -Wall
+    dependencies:
+      - base
+      - filepath
+      - directory
+      - bytestring
+      - text
+      - data-default
+      - blaze-html
+      - shakespeare
+      - aeson
+      - yaml
+      - pandoc-types
+      - pandoc
+      - shake

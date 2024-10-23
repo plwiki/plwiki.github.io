@@ -1,0 +1,40 @@
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.37.0.
+--
+-- see: https://github.com/sol/hpack
+
+name:           plwiki
+version:        0.0.0
+homepage:       https://github.com/plwiki/plwiki.github.io#readme
+bug-reports:    https://github.com/plwiki/plwiki.github.io/issues
+build-type:     Simple
+
+source-repository head
+  type: git
+  location: https://github.com/plwiki/plwiki.github.io
+
+executable buildWiki
+  main-is: Shakefile.hs
+  other-modules:
+      Paths_plwiki
+  hs-source-dirs:
+      ./
+  default-extensions:
+      LambdaCase
+  ghc-options: -Wall
+  build-depends:
+      aeson
+    , base
+    , blaze-html
+    , bytestring
+    , data-default
+    , directory
+    , filepath
+    , pandoc
+    , pandoc-types
+    , shake
+    , shakespeare
+    , text
+    , yaml
+  default-language: GHC2021

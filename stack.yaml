@@ -1,0 +1,5 @@
+snapshot: lts-22.39
+nix:
+  packages: [pkg-config, zlib]
+packages:
+  - .

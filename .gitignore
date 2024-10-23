@@ -4,3 +4,4 @@ bin
 site
 result
 .direnv
+.stack-work
