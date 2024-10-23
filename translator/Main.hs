@@ -1,5 +1,4 @@
 {-# LANGUAGE QuasiQuotes #-}
-{-# LANGUAGE OverloadedStrings #-}
 
 module Main where
 
@@ -7,6 +6,7 @@ import GHC.Generics
 import Control.Applicative
 import Data.Default
 import Data.List
+import Data.String
 import Data.Text qualified as T
 import Data.Text.Encoding qualified as T
 import Data.ByteString qualified as BS
@@ -37,7 +37,7 @@ relativeUrl (RWiki title) = "wiki" </> title ++ ".html"
 relativeUrl RMainCss = "css/main.css"
 
 renderUrl :: H.Render Route
-renderUrl r _ = "/" <> T.pack (relativeUrl r)
+renderUrl r _ = T.pack ("/" ++ relativeUrl r)
 
 data Config = Config
   { route :: Route
@@ -187,8 +187,8 @@ writeHtml = P.writeHtml5 options
 translateDocument :: Metadata -> T.Text -> P.PandocIO BL.ByteString
 translateDocument meta content = do
   ast0 <- readMarkdown content
-  let ast1 = ( P.setMeta "link-citations" True
-             . P.setMeta "bibliography" ("src/bibliography.bib" :: T.Text)
+  let ast1 = ( P.setMeta (T.pack "link-citations") True
+             . P.setMeta (T.pack "bibliography") (T.pack "src/bibliography.bib")
              ) ast0
   ast2 <- P.processCitations ast1
   html <- wikiTemplate meta <$> writeHtml ast2
@@ -198,11 +198,11 @@ translateDocument meta content = do
 readWikiFile :: FilePath -> IO (Metadata, T.Text)
 readWikiFile path = do
   s <- BS.readFile path
-  case BS.stripPrefix "---\n" s of
+  case BS.stripPrefix (fromString "---\n") s of
     Nothing -> error "no yaml header begin"
     Just s' -> do
-      let (as, bs) = BS.breakSubstring "---\n" s'
-      case BS.stripPrefix "---\n" bs of
+      let (as, bs) = BS.breakSubstring (fromString "---\n") s'
+      case BS.stripPrefix (fromString "---\n") bs of
         Nothing -> error "yaml header end"
         Just bs' -> do
           meta <- Y.decodeThrow as
