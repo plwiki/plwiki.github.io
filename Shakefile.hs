@@ -212,12 +212,14 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         metaSrcs <- getDirectoryFiles "" ["src/meta/*.md"]
         wikiSrcs <- getDirectoryFiles "" ["src/wiki/*.md"]
         need $ metaSrcs ++ wikiSrcs
+        putInfo "Generating site/index.html"
         let result = H.renderHtml (indexTemplate (map takeBaseName metaSrcs) (map takeBaseName wikiSrcs))
         writeByteString out result
 
   , "site/meta/*.html" %> \out -> do
         let src = "src/meta" </> takeBaseName out <.> "md"
         need [src, "src/bibliography.bib"]
+        putInfo ("Generating " ++ out)
         (meta, content) <- liftIO $ readWikiFile src
         result <- liftIO $ P.runIOorExplode (translateDocument meta content)
         writeByteString out result
@@ -225,12 +227,14 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
   , "site/wiki/*.html" %> \out -> do
         let src = "src/wiki" </> takeBaseName out <.> "md"
         need [src, "src/bibliography.bib"]
+        putInfo ("Generating " ++ out)
         (meta, content) <- readWikiFile src
         result <- liftIO $ P.runIOorExplode (translateDocument meta content)
         writeByteString out result
 
   , "site/css/*.css" %> \out -> do
         let src = replaceDirectory1 out "src"
+        putInfo ("Copying " ++ out)
         copyFile' src out
 
   ]
