@@ -200,8 +200,8 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
   [ want ["all"]
 
   , "all" ~> do
-      metaSrcs <- getDirectoryFiles "src/meta" ["*.md"]
-      wikiSrcs <- getDirectoryFiles "src/wiki" ["*.md"]
+      metaSrcs <- getDirectoryFiles "src/meta" ["//*.md"]
+      wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
       cssSrcs  <- getDirectoryFiles "src/css"  ["*.css"]
       need $ ["site/index.html"]
           ++ ["site/meta" </> f -<.> "html" | f <- metaSrcs]
@@ -213,23 +213,24 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
       removeFilesAfter "site" ["//"]
 
   , "site/index.html" %> \out -> do
-        metaSrcs <- getDirectoryFiles "" ["src/meta/*.md"]
-        wikiSrcs <- getDirectoryFiles "" ["src/wiki/*.md"]
-        need $ metaSrcs ++ wikiSrcs
+        metaSrcs <- getDirectoryFiles "src/meta" ["//*.md"]
+        wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
+        need $ ["src/meta" </> f | f <- metaSrcs]
+            ++ ["src/wiki" </> f | f <- wikiSrcs]
         putInfo "Generating site/index.html"
-        let result = H.renderHtml (indexTemplate (map takeBaseName metaSrcs) (map takeBaseName wikiSrcs))
+        let result = H.renderHtml (indexTemplate (map dropExtension metaSrcs) (map dropExtension wikiSrcs))
         writeByteString out result
 
-  , "site/meta/*.html" %> \out -> do
-        let src = "src/meta" </> takeBaseName out <.> "md"
+  , "site/meta//*.html" %> \out -> do
+        let src = replaceDirectory1 out "src" -<.> "md"
         need [src, "src/bibliography.bib"]
         putInfo ("Generating " ++ out)
         (meta, content) <- liftIO $ readWikiFile src
         result <- liftIO $ P.runIOorExplode (translateDocument meta content)
         writeByteString out result
 
-  , "site/wiki/*.html" %> \out -> do
-        let src = "src/wiki" </> takeBaseName out <.> "md"
+  , "site/wiki//*.html" %> \out -> do
+        let src = replaceDirectory1 out "src" -<.> "md"
         need [src, "src/bibliography.bib"]
         putInfo ("Generating " ++ out)
         (meta, content) <- readWikiFile src
