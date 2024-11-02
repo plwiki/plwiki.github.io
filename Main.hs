@@ -203,7 +203,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
       metaSrcs <- getDirectoryFiles "src/meta" ["//*.md"]
       wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
       cssSrcs  <- getDirectoryFiles "src/css"  ["*.css"]
-      need $ ["site/index.html"]
+      need $ ["site/index.html", "site/google4d4f29e2cef004bd.html"]
           ++ ["site/meta" </> f -<.> "html" | f <- metaSrcs]
           ++ ["site/wiki" </> f -<.> "html" | f <- wikiSrcs]
           ++ ["site/css"  </> f             | f <- cssSrcs]
@@ -242,4 +242,8 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         putInfo ("Copying " ++ out)
         copyFile' src out
 
+  , "site/google4d4f29e2cef004bd.html" %> \out -> do
+        let src = replaceDirectory1 out "src"
+        putInfo ("Copying " ++ out)
+        copyFile' src out
   ]
