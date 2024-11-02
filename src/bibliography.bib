@@ -61,6 +61,47 @@
   pages={511–540}
 }
 
+@book{Pierce2002,
+    author = {Pierce, Benjamin C.},
+    title = {Types and Programming Languages},
+    year = {2002},
+    isbn = {0262162091},
+    publisher = {The MIT Press},
+    edition = {1st},
+    abstract = {A type system is a syntactic method for automatically checking the absence of certain erroneous behaviors by classifying program phrases according to the kinds of values they compute. The study of type systems -- and of programming languages from a type-theoretic perspective -- has important applications in software engineering, language design, high-performance compilers, and security.This text provides a comprehensive introduction both to type systems in computer science and to the basic theory of programming languages. The approach is pragmatic and operational; each new concept is motivated by programming examples and the more theoretical sections are driven by the needs of implementations. Each chapter is accompanied by numerous exercises and solutions, as well as a running implementation, available via the Web. Dependencies between chapters are explicitly identified, allowing readers to choose a variety of paths through the material.The core topics include the untyped lambda-calculus, simple type systems, type reconstruction, universal and existential polymorphism, subtyping, bounded quantification, recursive types, kinds, and type operators. Extended case studies develop a variety of approaches to modeling the features of object-oriented languages.}
+}
+
+@article{Tarski1955a,
+    author={Tarski, Alfred},
+    title={A lattice-theoretical fixpoint theorem and its applications},
+    year={1955},
+    volume={5},
+    number={2},
+    pages={285-309},
+    doi={10.2140/pjm.1955.5.285},
+    journal={Pacific Journals of Mathematics}
+}
+
+@article{Wadler2015a,
+    author = {Wadler, Philip},
+    title = {Propositions as types},
+    year = {2015},
+    issue_date = {December 2015},
+    publisher = {Association for Computing Machinery},
+    address = {New York, NY, USA},
+    volume = {58},
+    number = {12},
+    issn = {0001-0782},
+    url = {https://doi.org/10.1145/2699407},
+    doi = {10.1145/2699407},
+    abstract = {Connecting mathematical logic and computation, it ensures that some aspects of programming are absolute.},
+    journal = {Communications of the ACM},
+    month = nov,
+    pages = {75–84},
+    numpages = {10}
+}
+
+% CMU 15-317 Constructive Logic lecture notes
 @article{Pfenning2023-whatis,
   title={Lecture Notes on What is (Constructive) Logic?},
   author={Frank Pfenning},
@@ -229,32 +270,84 @@
   url={https://www.cs.cmu.edu/~fp/courses/15317-s23/lectures/25-msgpassing.pdf}
 }
 
-@article{Tarski1955a,
-    author={Tarski, Alfred},
-    title={A lattice-theoretical fixpoint theorem and its applications},
-    year={1955},
-    volume={5},
-    number={2},
-    pages={285-309},
-    doi={10.2140/pjm.1955.5.285},
-    journal={Pacific Journals of Mathematics}
+% Software Foundations series
+@book{Pierce:SF1,
+    author       =   {Benjamin C. Pierce and
+                      Arthur Azevedo de Amorim and
+                      Chris Casinghino and
+                      Marco Gaboardi and
+                      Michael Greenberg and
+                      Cătălin Hriţcu and
+                      Vilhelm Sjöberg and
+                      Brent Yorgey},
+    editor       =   {Benjamin C. Pierce},
+    title        =   "Logical Foundations",
+    series       =   "Software Foundations",
+    volume       =   "1",
+    year         =   "2024",
+    publisher    =   "Electronic textbook",
+    note         =   {Version 6.7, \URL{http://softwarefoundations.cis.upenn.edu}}
 }
 
-@article{Wadler2015a,
-    author = {Wadler, Philip},
-    title = {Propositions as types},
-    year = {2015},
-    issue_date = {December 2015},
-    publisher = {Association for Computing Machinery},
-    address = {New York, NY, USA},
-    volume = {58},
-    number = {12},
-    issn = {0001-0782},
-    url = {https://doi.org/10.1145/2699407},
-    doi = {10.1145/2699407},
-    abstract = {Connecting mathematical logic and computation, it ensures that some aspects of programming are absolute.},
-    journal = {Communications of the ACM},
-    month = nov,
-    pages = {75–84},
-    numpages = {10}
+@book{Pierce:SF2,
+    author       =   {Benjamin C. Pierce and
+                     Arthur Azevedo de Amorim and
+                     Chris Casinghino and
+                     Marco Gaboardi and
+                     Michael Greenberg and
+                     Cătălin Hriţcu and
+                     Vilhelm Sjöberg and
+                     Andrew Tolmach and
+                     Brent Yorgey},
+    editor       =   {Benjamin C. Pierce},
+    title        =   "Programming Language Foundations",
+    series       =   "Software Foundations",
+    volume       =   "2",
+    year         =   "2024",
+    publisher    =   "Electronic textbook",
+    note         =   {Version 6.7, \URL{http://softwarefoundations.cis.upenn.edu} },
+}
+
+@book{Appel:SF3,
+    author       =   {Andrew W. Appel},
+    editor       =   {Benjamin C. Pierce},
+    title        =   "Verified Functional Algorithms",
+    series       =   "Software Foundations",
+    volume       =   "3",
+    year         =   "2024",
+    publisher    =   "Electronic textbook",
+    note         =   {Version 1.5.5, \URL{http://softwarefoundations.cis.upenn.edu} },
+}
+
+@book{Lampropoulos:SF4,
+    author       =   {Leonidas Lampropoulos and Benjamin C. Pierce},
+    editor       =   {Benjamin C. Pierce},
+    title        =   "QuickChick: Property-Based Testing in Coq",
+    series       =   "Software Foundations",
+    volume       =   "4",
+    year         =   "2023",
+    publisher    =   "Electronic textbook",
+    note         =   {Version 1.3.2, \URL{http://softwarefoundations.cis.upenn.edu} },
+}
+
+@book{Appel:SF5,
+    author       =   {Andrew W. Appel, Lennart Beringer, and Qinxiang Cao},
+    editor       =   {Benjamin C. Pierce},
+    title        =   "Verifiable C",
+    series       =   "Software Foundations",
+    volume       =   "5",
+    year         =   "2023",
+    publisher    =   "Electronic textbook",
+    note         =   {Version 1.2.2, \URL{http://softwarefoundations.cis.upenn.edu} },
+}
+
+@book{Chargueraud:SF6,
+    author       =   {Arthur Charguéraud},
+    editor       =   {Benjamin C. Pierce},
+    title        =   "Separation Logic Foundations",
+    series       =   "Software Foundations",
+    volume       =   "6",
+    year         =   "2024",
+    publisher    =   "Electronic textbook",
+    note         =   {Version 2.2, \URL{http://softwarefoundations.cis.upenn.edu} },
 }
