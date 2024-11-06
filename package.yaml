@@ -21,3 +21,5 @@ executables:
       - pandoc-types
       - pandoc
       - shake
+      - transformers
+      - mtl

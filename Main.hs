@@ -3,7 +3,10 @@
 module Main where
 
 import GHC.Generics
+import Control.Monad
 import Control.Monad.IO.Class
+import Control.Monad.Trans.State.Strict
+import Control.Monad.Trans.Except
 import Data.Default
 import Data.List
 import Data.String
@@ -145,7 +148,7 @@ indexTemplate metas wikis =
                 ]
 
 -- document translator
-readMarkdown :: T.Text -> P.PandocIO P.Pandoc
+readMarkdown :: P.PandocMonad m => T.Text -> m P.Pandoc
 readMarkdown = P.readMarkdown options
   where
     options = def
@@ -158,14 +161,14 @@ readMarkdown = P.readMarkdown options
                               ]
       }
 
-writeHtml :: P.Pandoc -> P.PandocIO H.Html
+writeHtml :: P.PandocMonad m => P.Pandoc -> m H.Html
 writeHtml = P.writeHtml5 options
   where
     options = def
       { P.writerHTMLMathMethod = P.MathJax P.defaultMathJaxURL
       }
 
-translateDocument :: Metadata -> T.Text -> P.PandocIO BL.ByteString
+translateDocument :: P.PandocMonad m => Metadata -> T.Text -> m BL.ByteString
 translateDocument meta content = do
   ast0 <- readMarkdown content
   let ast1 = ( P.setMeta (T.pack "link-citations") True
@@ -178,7 +181,18 @@ translateDocument meta content = do
   html <- wikiTemplate meta <$> writeHtml ast2
   pure (H.renderHtml html)
 
+runPandocPure :: P.PandocPure a -> P.CommonState -> P.PureState -> Either P.PandocError a
+runPandocPure m cs ps = ( flip evalState ps
+                        . flip evalStateT cs
+                        . runExceptT
+                        . P.unPandocPure
+                        ) m
+
 -- Build system
+handleError :: Either P.PandocError a -> Action a
+handleError (Left e)  = fail (T.unpack (P.renderError e))
+handleError (Right r) = pure r
+
 readWikiFile :: MonadIO m => FilePath -> m (Metadata, T.Text)
 readWikiFile path = liftIO $ do
   s <- BS.readFile path
@@ -229,7 +243,8 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         need [src, "src/bibliography.bib", "src/association-for-computing-machinery.csl"]
         putInfo ("Generating " ++ out)
         (meta, content) <- liftIO $ readWikiFile src
-        result <- liftIO $ P.runIOorExplode (translateDocument meta content)
+        files <- liftIO $ foldM P.addToFileTree mempty ["src/bibliography.bib", "src/association-for-computing-machinery.csl"]
+        result <- handleError $ runPandocPure (translateDocument meta content) def (def {P.stFiles = files})
         writeByteString out result
 
   , "site/wiki//*.html" %> \out -> do
@@ -237,7 +252,8 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         need [src, "src/bibliography.bib", "src/association-for-computing-machinery.csl"]
         putInfo ("Generating " ++ out)
         (meta, content) <- readWikiFile src
-        result <- liftIO $ P.runIOorExplode (translateDocument meta content)
+        files <- liftIO $ foldM P.addToFileTree mempty ["src/bibliography.bib", "src/association-for-computing-machinery.csl"]
+        result <- handleError $ runPandocPure (translateDocument meta content) def (def {P.stFiles = files})
         writeByteString out result
 
   , "site/css/*.css" %> \out -> do

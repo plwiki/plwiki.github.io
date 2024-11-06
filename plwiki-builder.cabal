@@ -1,6 +1,6 @@
 cabal-version: 1.12
 
--- This file has been generated from package.yaml by hpack version 0.37.0.
+-- This file has been generated from package.yaml by hpack version 0.36.1.
 --
 -- see: https://github.com/sol/hpack
 
@@ -25,10 +25,12 @@ executable build
     , data-default
     , directory
     , filepath
+    , mtl
     , pandoc
     , pandoc-types
     , shake
     , shakespeare
     , text
+    , transformers
     , yaml
   default-language: GHC2021
