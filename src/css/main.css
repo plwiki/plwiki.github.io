@@ -91,3 +91,9 @@ th, td {
 #wiki-index {
   column-count: 2;
 }
+div.csl-left-margin {
+  display: inline;
+}
+div.csl-right-inline{
+  display: inline;
+}
