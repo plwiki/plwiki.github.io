@@ -16,7 +16,14 @@
       system:
       let
         pkgs = nixpkgs.legacyPackages."${system}";
-        plwiki-builder = pkgs.haskellPackages.callCabal2nix "plwiki-builder" ./. { };
+        lib = pkgs.lib;
+        plwiki-builder = pkgs.haskellPackages.callCabal2nix "plwiki-builder" (lib.fileset.toSource {
+          root = ./.;
+          fileset = lib.fileset.unions [
+            ./plwiki-builder.cabal
+            ./Main.hs
+          ];
+        }) { };
         plwiki = pkgs.callPackage (
           {
             stdenv,
