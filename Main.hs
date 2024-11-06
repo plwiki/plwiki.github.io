@@ -169,6 +169,9 @@ translateDocument :: Metadata -> T.Text -> P.PandocIO BL.ByteString
 translateDocument meta content = do
   ast0 <- readMarkdown content
   let ast1 = ( P.setMeta (T.pack "link-citations") True
+             . P.setMeta (T.pack "csl") (T.pack "src/association-for-computing-machinery.csl")
+             -- TODO : fix heading number for reference section title
+             . P.setMeta (T.pack "reference-section-title") (T.pack "참고문헌")
              . P.setMeta (T.pack "bibliography") (T.pack "src/bibliography.bib")
              ) ast0
   ast2 <- P.processCitations ast1
@@ -223,7 +226,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
 
   , "site/meta//*.html" %> \out -> do
         let src = replaceDirectory1 out "src" -<.> "md"
-        need [src, "src/bibliography.bib"]
+        need [src, "src/bibliography.bib", "src/association-for-computing-machinery.csl"]
         putInfo ("Generating " ++ out)
         (meta, content) <- liftIO $ readWikiFile src
         result <- liftIO $ P.runIOorExplode (translateDocument meta content)
@@ -231,7 +234,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
 
   , "site/wiki//*.html" %> \out -> do
         let src = replaceDirectory1 out "src" -<.> "md"
-        need [src, "src/bibliography.bib"]
+        need [src, "src/bibliography.bib", "src/association-for-computing-machinery.csl"]
         putInfo ("Generating " ++ out)
         (meta, content) <- readWikiFile src
         result <- liftIO $ P.runIOorExplode (translateDocument meta content)
