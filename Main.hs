@@ -25,6 +25,7 @@ import System.Directory
 import System.FilePath
 import Development.Shake
 import Development.Shake.FilePath
+import Network.URI qualified as U
 
 -- Route
 data Route
@@ -212,6 +213,9 @@ writeByteString name x = liftIO $ do
   createDirectoryIfMissing True (takeDirectory name)
   BL.writeFile name x
 
+domain :: String
+domain = "https://plwiki.github.io"
+
 main :: IO ()
 main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
   [ want ["all"]
@@ -220,7 +224,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
       metaSrcs <- getDirectoryFiles "src/meta" ["//*.md"]
       wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
       cssSrcs  <- getDirectoryFiles "src/css"  ["*.css"]
-      need $ ["site/index.html", "site/google4d4f29e2cef004bd.html"]
+      need $ ["site/index.html", "site/sitemap.txt", "site/google4d4f29e2cef004bd.html"]
           ++ ["site/meta" </> f -<.> "html" | f <- metaSrcs]
           ++ ["site/wiki" </> f -<.> "html" | f <- wikiSrcs]
           ++ ["site/css"  </> f             | f <- cssSrcs]
@@ -237,6 +241,17 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         putInfo "Generating site/index.html"
         let result = H.renderHtml (indexTemplate (map dropExtension metaSrcs) (map dropExtension wikiSrcs))
         writeByteString out result
+
+  , "site/sitemap.txt" %> \out -> do
+        metaSrcs <- getDirectoryFiles "src/meta" ["//*.md"]
+        wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
+        need $ ["src/meta" </> f | f <- metaSrcs]
+            ++ ["src/wiki" </> f | f <- wikiSrcs]
+        putInfo "Generating site/sitemap.txt"
+        let result = map (domain </>) $ [""]
+                                     ++ ["meta" </> U.escapeURIString U.isUnescapedInURI f -<.> "html" | f <- metaSrcs]
+                                     ++ ["wiki" </> U.escapeURIString U.isUnescapedInURI f -<.> "html" | f <- wikiSrcs]
+        writeFileLines out result
 
   , "site/meta//*.html" %> \out -> do
         let src = replaceDirectory1 out "src" -<.> "md"

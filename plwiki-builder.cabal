@@ -26,6 +26,7 @@ executable build
     , directory
     , filepath
     , mtl
+    , network-uri
     , pandoc
     , pandoc-types
     , shake
