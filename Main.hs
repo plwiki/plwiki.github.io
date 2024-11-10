@@ -148,6 +148,21 @@ indexTemplate metas wikis =
                 | title <- sort wikis
                 ]
 
+sitemapTemplate :: [String] -> String
+sitemapTemplate locs = unlines $
+  [ "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+  , "<urlset"
+  , "    xmlns=\"http://www.sitemaps.org/schemas/sitemap/0.9\""
+  , "    xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\""
+  , "    xsi:schemaLocation="
+  , "        \"http://www.sitemaps.org/schemas/sitemap/0.9"
+  , "          http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd\">"
+  , urls
+  , "</urlset>"
+  ]
+  where
+    urls = unlines ["<url>" ++ "<loc>" ++ loc ++ "</loc>" ++ "</url>" | loc <- locs]
+
 -- document translator
 readMarkdown :: P.PandocMonad m => T.Text -> m P.Pandoc
 readMarkdown = P.readMarkdown options
@@ -224,7 +239,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
       metaSrcs <- getDirectoryFiles "src/meta" ["//*.md"]
       wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
       cssSrcs  <- getDirectoryFiles "src/css"  ["*.css"]
-      need $ ["site/index.html", "site/sitemap.txt", "site/google4d4f29e2cef004bd.html"]
+      need $ ["site/index.html", "site/sitemap.xml", "site/google4d4f29e2cef004bd.html"]
           ++ ["site/meta" </> f -<.> "html" | f <- metaSrcs]
           ++ ["site/wiki" </> f -<.> "html" | f <- wikiSrcs]
           ++ ["site/css"  </> f             | f <- cssSrcs]
@@ -242,16 +257,16 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         let result = H.renderHtml (indexTemplate (map dropExtension metaSrcs) (map dropExtension wikiSrcs))
         writeByteString out result
 
-  , "site/sitemap.txt" %> \out -> do
+  , "site/sitemap.xml" %> \out -> do
         metaSrcs <- getDirectoryFiles "src/meta" ["//*.md"]
         wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
         need $ ["src/meta" </> f | f <- metaSrcs]
             ++ ["src/wiki" </> f | f <- wikiSrcs]
         putInfo "Generating site/sitemap.txt"
-        let result = map (domain </>) $ [""]
-                                     ++ ["meta" </> U.escapeURIString U.isUnescapedInURI f -<.> "html" | f <- metaSrcs]
-                                     ++ ["wiki" </> U.escapeURIString U.isUnescapedInURI f -<.> "html" | f <- wikiSrcs]
-        writeFileLines out result
+        let result = sitemapTemplate $ [domain </> ""]
+                                    ++ [domain </> "meta" </> U.escapeURIString U.isUnescapedInURI f -<.> "html" | f <- metaSrcs]
+                                    ++ [domain </> "wiki" </> U.escapeURIString U.isUnescapedInURI f -<.> "html" | f <- wikiSrcs]
+        writeFile' out result
 
   , "site/meta//*.html" %> \out -> do
         let src = replaceDirectory1 out "src" -<.> "md"
