@@ -35,7 +35,7 @@ data Route
   deriving Show
 
 relativeUrl :: Route -> FilePath
-relativeUrl RIndex = "index.html"
+relativeUrl RIndex = ""
 relativeUrl (RMeta title) = "meta" </> title ++ ".html"
 relativeUrl (RWiki title) = "wiki" </> title ++ ".html"
 relativeUrl RMainCss = "css/main.css"
