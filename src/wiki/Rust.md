@@ -4,21 +4,21 @@ categories: ["프로그래밍 언어", "명령형 프로그래밍 언어"]
 license: CC BY-SA 4.0
 ---
 
-Rust는 [러스트 재단](https://foundation.rust-lang.org/)에 의해 개발 및 관리되고 있는 프로그래밍 언어이다. 
+Rust는 성능, 신뢰성, 생산성 등에 초점을 맞춘 시스템 프로그래밍 언어이다.
 
 ## 특징
 소유권(OwnerShip)과 수명(Lifetime) 개념을 도입해 GC없는 메모리 관리를 한다. 
 
 ### 소유권
-Rust에서 관리되는 모든 값(스택 메모리 상의 공간)은 특정 변수(혹은 구조체의 필드명, 매개변수)에 귀속되며 각 변수와 값은 매 순간 일대일로 대응된다. 만약 특정 값을 소유한 이름에 접근이 불가능해지는 순간 해당 값의 할당은 해제된다. 
+Rust에서 관리되는 모든 값(스택 메모리 상의 공간)은 특정 변수(혹은 구조체의 필드명, 매개변수)에 귀속되며 각 변수와 값은 매 순간 일대일로 대응된다. 만약 특정 값을 소유한 이름에 접근이 불가능해지면 그 값의 할당은 해제된다. 
 
 ```Rust
 {
-    let s = "hello";
+    let n = 10;
 }
-// s가 선언된 scope를 벗어나 s에 접근이 불가능하기 때문에 "hello"라는 문자열이 할당된 공간은 해제된다.
+// n이 선언된 scope를 벗어나 n에 접근이 불가능하기 때문에 10을 저장하기 위해 할당된 공간이 해제된다.
 ```
-즉 이를 통해 Rust는 [RAII](RAII) 를 강제하게 된다.
+이를 통해 Rust는 [RAII](RAII) 를 강제하게 된다.
 
 ### 참조와 수명
 Rust에서 특정 값을 소유권을 가진 변수외에 접근하는 방법으로 참조가 존재한다. 참조는 크게 가변참조(mutable reference)와 불변참조(immutable reference)로 나뉘는데 그에 대한 규칙은 다음과 같다.
@@ -31,14 +31,14 @@ Rust에서 특정 값을 소유권을 가진 변수외에 접근하는 방법으
 이는 다음과 같은 실수를 막기 위한 규칙이다.
 
 ```Rust
-fn add(a : &mut usize){
-    a+=1
+fn add(a : &mut usize) {
+    a = a + 1;
 }
 
-fn main(){
+fn main() {
     let mut a = 3;
-    let b = &a; //b를 불변참조로 설정한 시점에서 b가 참조하는 값이 변하지 않기를 기대함을 알 수 있다
-    let c = &mut a; //그러나 만약 여기서 불변참조와 같이 존재하는 가변참조를 생성한다면
+    let b = &a; // b를 불변참조로 설정한 시점에서 b가 참조하는 값이 변하지 않기를 기대함을 알 수 있다
+    let c = &mut a; // 그러나 만약 여기서 불변참조와 같이 존재하는 가변참조를 생성한다면
     add(c);
     print!(b) // b가 참조하는 값이 이미 변해있을 수 있다
 }
@@ -68,6 +68,6 @@ fn main(){
 
 
 ## 외부 링크
-* [러스트 재단](https://foundation.rust-lang.org/)
+* [공식 웹사이트](https://www.rust-lang.org/)
 * [The Book](https://doc.rust-lang.org/book/)
 * [Rust Playground](https://play.rust-lang.org/?version=stable&mode=debug&edition=2021)
