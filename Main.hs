@@ -106,7 +106,7 @@ wikiTemplate (Metadata title categories _) content =
         #{ headerTemplate }
         <main>
           <article class="content-box">
-            <h1> #{ title }
+            <h1 id="document-title"> #{ title }
             #{ categoriesTemplate categories }
             #{ content }
   |] renderUrl

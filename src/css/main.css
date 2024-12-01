@@ -3,6 +3,8 @@
   --main-color: #202020;
   --light-blue: #007BFF;
   --dark-blue: #0056B3;
+  --light-green: #33b733;
+  --dark-green: #248024;
   --border-color: #D1D9E0;
   --source-background: #E8F2FB;
 }
@@ -33,6 +35,11 @@ header {
   border-width: thin;
   border-bottom-style: solid;
 }
+#document-title {
+  font-size: 3rem;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
 a {
   text-decoration: none;
   color: var(--light-blue);
@@ -40,6 +47,12 @@ a {
 a:hover {
   text-decoration: underline;
   color: var(--dark-blue);
+}
+a[href ^= "http"] {
+  color: var(--light-green);
+}
+a[href ^= "http"]:hover {
+  color: var(--dark-green);
 }
 div.sourceCode {
   border-color: var(--border-color);
