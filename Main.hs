@@ -272,7 +272,7 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         let src = replaceDirectory1 out "src" -<.> "md"
         need [src, "src/bibliography.bib", "src/association-for-computing-machinery.csl"]
         putInfo ("Generating " ++ out)
-        (meta, content) <- liftIO $ readWikiFile src
+        (meta, content) <- readWikiFile src
         files <- liftIO $ foldM P.addToFileTree mempty ["src/bibliography.bib", "src/association-for-computing-machinery.csl"]
         result <- handleError $ runPandocPure (translateDocument meta content) def (def {P.stFiles = files})
         writeByteString out result
