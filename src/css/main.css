@@ -101,7 +101,7 @@ th, td {
   font-size: 3rem;
   color: var(--main-color);
 }
-#wiki-index {
+ul.wiki-index {
   column-count: 2;
 }
 div.csl-left-margin {

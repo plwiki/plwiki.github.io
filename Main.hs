@@ -23,6 +23,7 @@ import Text.Pandoc.Builder qualified as P
 import Text.Pandoc.Citeproc qualified as P
 import System.Directory
 import System.FilePath
+import System.IO
 import Development.Shake
 import Development.Shake.FilePath
 import Network.URI qualified as U
@@ -111,7 +112,7 @@ wikiTemplate (Metadata title categories _) content =
             #{ content }
   |] renderUrl
 
-indexTemplate :: [String] -> [String] -> H.Html
+indexTemplate :: [(String, Integer)] -> [(String, Integer)] -> H.Html
 indexTemplate metas wikis =
   [H.hamlet|
     $doctype 5
@@ -128,25 +129,22 @@ indexTemplate metas wikis =
             PL wiki는 프로그래밍 언어론을 중심으로 컴퓨터 과학, 논리학, 수학, 철학에 대한 정보를 정리하기 위한 위키입니다.
             <h1> 색인
             <h2> 메타
-            <ul id="meta-index"> #{ metalinks }
-            <h2> 문서
-            <ul id="wiki-index"> #{ wikilinks }
+            <ul class="meta-index"> #{ links RMeta metas }
+            <h2> #{threshold}B 이상 문서
+            <ul class="wiki-index"> #{ links RWiki wikiBig }
+            <h2> #{threshold}B 미만 문서
+            <ul class="wiki-index"> #{ links RWiki wikiSmall }
   |] renderUrl
   where
-    metalinks = [ [H.hamlet|
-                    <li>
-                      <a href=@{ RMeta title }>
-                        #{ title }
-                  |] renderUrl
-                | title <- sort metas
-                ]
-    wikilinks = [ [H.hamlet|
-                    <li>
-                      <a href=@{ RWiki title }>
-                        #{ title }
-                  |] renderUrl
-                | title <- sort wikis
-                ]
+    threshold = 2500
+    (wikiSmall, wikiBig) = partition ((<threshold) . snd) wikis
+    links route titles = [ [H.hamlet|
+                             <li>
+                               <a href=@{ route title }>
+                                 #{ title }
+                           |] renderUrl
+                         | (title, _) <- sort titles
+                         ]
 
 sitemapTemplate :: [String] -> String
 sitemapTemplate locs = unlines $
@@ -253,8 +251,10 @@ main = shakeArgs shakeOptions{shakeFiles="_build"} $ mconcat
         wikiSrcs <- getDirectoryFiles "src/wiki" ["//*.md"]
         need $ ["src/meta" </> f | f <- metaSrcs]
             ++ ["src/wiki" </> f | f <- wikiSrcs]
+        metaArgs <- liftIO . forM metaSrcs $ \f -> (dropExtension f,) <$> withFile ("src/meta" </> f) ReadMode hFileSize
+        wikiArgs <- liftIO . forM wikiSrcs $ \f -> (dropExtension f,) <$> withFile ("src/wiki" </> f) ReadMode hFileSize
         putInfo "Generating site/index.html"
-        let result = H.renderHtml (indexTemplate (map dropExtension metaSrcs) (map dropExtension wikiSrcs))
+        let result = H.renderHtml (indexTemplate metaArgs wikiArgs)
         writeByteString out result
 
   , "site/sitemap.xml" %> \out -> do
