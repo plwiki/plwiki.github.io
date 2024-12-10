@@ -11,5 +11,8 @@ Coq는 의존 타입 함수형 프로그래밍 언어이자 증명보조기이�
 ### Software Foundations
 [SF](https://softwarefoundations.cis.upenn.edu/) 시리즈는 소프트웨어의 수학적 기초에 대한 교재로, 모든 내용이 Coq으로 형식화 되어있다. 현재 총 6권으로 구성되어있다.
 
+### Certified Programming with Dependent Types
+[CPDT](http://adam.chlipala.net/cpdt/)는 Coq와 소프트웨어 검증 등을 다루는 교재이다. SF 시리즈에 비해 난이도가 비교적 높다.
+
 ## 외부 링크
 * [공식 웹사이트](https://coq.inria.fr/)
