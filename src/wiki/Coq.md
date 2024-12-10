@@ -5,6 +5,7 @@ license: CC BY-SA 4.0
 ---
 
 Coq는 의존 타입 함수형 프로그래밍 언어이자 증명보조기이다.
+[Calculus of Inductive Constructions](Calculus of Constructions)에 기반하고 있다.
 
 ## 교재
 
