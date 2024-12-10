@@ -14,5 +14,9 @@ Coq는 의존 타입 함수형 프로그래밍 언어이자 증명보조기이�
 ### Certified Programming with Dependent Types
 [CPDT](http://adam.chlipala.net/cpdt/)는 Coq와 소프트웨어 검증 등을 다루는 교재이다. SF 시리즈에 비해 난이도가 비교적 높다.
 
+### Coq'Art
+[Coq'Art](https://www.labri.fr/perso/casteran/CoqArt/)는 Coq와 *Calculus of Inductive Constructions*에 대한 교재이다.
+프랑스어판은 무료 pdf를 제공하고 있으나, 영어판은 일부 챕터만 무료로 공개돼있다.
+
 ## 외부 링크
 * [공식 웹사이트](https://coq.inria.fr/)
