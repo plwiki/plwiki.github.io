@@ -7,6 +7,8 @@ license: CC BY-SA 4.0
 Coq는 의존 타입 함수형 프로그래밍 언어이자 증명보조기이다.
 [Calculus of Inductive Constructions](Calculus of Constructions)에 기반하고 있다.
 
+2024년에 Coq를 Rocq로 개명하는 [로드맵](https://github.com/coq/rfcs/blob/coq-roadmap/text/069-coq-roadmap.md#change-of-name-coq---the-rocq-prover)이 발표되었다.
+
 ## 교재
 
 ### Software Foundations
@@ -21,3 +23,4 @@ Coq는 의존 타입 함수형 프로그래밍 언어이자 증명보조기이�
 
 ## 외부 링크
 * [공식 웹사이트](https://coq.inria.fr/)
+* [Rocq 웹사이트](https://rocq-prover.org/)
